@@ -28,7 +28,6 @@ const Signer = () => {
     signer: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [, copyToClipboard] = useCopyToClipboard();
 
   useEffect(() => {
@@ -53,13 +52,14 @@ const Signer = () => {
       const data = await res.json();
       setResult(data);
       setHistory([
-        ...history,
         { message, signature, isValid: data.isValid, signer: data.signer },
+        ...history,
       ]);
+      toast("Signing success!", { type: "success" });
       setMessage("");
     } catch (err) {
       console.error(err);
-      setError("Signing failed");
+      toast("Signing failed", { type: "error" });
     } finally {
       setIsLoading(false);
     }
@@ -68,10 +68,10 @@ const Signer = () => {
   const handleCopy = (text: string) => () => {
     copyToClipboard(text)
       .then(() => {
-        toast("Address is copied!");
+        toast("Address is copied!", { type: "success" });
       })
       .catch((error) => {
-        toast("Failed to copy address!");
+        toast("Failed to copy address!", { type: "error" });
         console.error("Failed to copy!", error);
       });
   };
@@ -149,17 +149,19 @@ const Signer = () => {
               </p>
             </div>
           )}
-          {error && <p className="text-red-500 mb-6">{error}</p>}
         </div>
 
-        <div className="p-8 min-w-xl bg-white rounded-xl">
+        <div className="p-8 min-w-xl max-w-full max-h-[700px] bg-white rounded-xl overflow-auto relative">
           <h2 className="text-xl font-semibold text-primary mb-4">History</h2>
           {history.length === 0 ? (
             <p className="text-gray-500">No messages signed yet.</p>
           ) : (
-            <ul className="space-y-4 overflow-auto">
-              {history.map((item, idx) => (
-                <li key={idx} className="p-4 bg-gray-50 rounded-md flex gap-2">
+            <ul className="space-y-4 overflow-auto w-full">
+              {history.map((item) => (
+                <li
+                  key={`${item.signature}`}
+                  className="p-4 bg-gray-50 rounded-md flex gap-2 animate__animated animate__bounceInDown"
+                >
                   <div>
                     <FontAwesomeIcon icon={faMessage} />
                   </div>
@@ -176,11 +178,13 @@ const Signer = () => {
                       </span>
                     </p>
                     <p>
+                      <span className="font-bold">Signed by: </span>
                       {`${primaryWallet?.address.slice(
                         0,
                         6
                       )}...${primaryWallet?.address?.slice(-6)}`}
                       <button
+                        className="p-0!"
                         onClick={handleCopy(primaryWallet?.address ?? "")}
                       >
                         <FontAwesomeIcon icon={faCopy} />

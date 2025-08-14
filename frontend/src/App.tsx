@@ -1,6 +1,7 @@
 import React from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
+import 'animate.css/animate.min.css';
 import "./App.css";
 
 import Login from "./pages/Login.tsx";
