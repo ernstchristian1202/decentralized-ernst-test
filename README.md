@@ -42,7 +42,7 @@ A full-stack Web3 application that allows users to authenticate via Dynamic.xyz'
    ```
 4. Run the frontend:
    ```bash
-   npm start
+   npm run dev
    ```
    The app will open at `http://localhost:5173`.
 
