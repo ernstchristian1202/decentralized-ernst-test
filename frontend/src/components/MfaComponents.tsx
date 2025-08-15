@@ -85,7 +85,7 @@ const MfaComponent: React.FC = () => {
   };
 
   return (
-    <div className="pt-6 mt-6">
+    <div>
       <p className="font-bold text-primary mb-4">
         Multi-Factor Authentication
       </p>
@@ -93,11 +93,11 @@ const MfaComponent: React.FC = () => {
         <div className="space-y-4">
           <p className="text-gray-700">
             Devices:{" "}
-            {userDevices.length === 0 ? "None" : JSON.stringify(userDevices)}
+            <span className="text-red-500">{userDevices.length === 0 ? "None" : JSON.stringify(userDevices)}</span>
           </p>
           <button
             onClick={handleAddDevice}
-            className="w-full bg-blue-100 border border-blue-200 text-gray-800 p-3 rounded-md hover:bg-teal-500 transition"
+            className="w-full text-white p-3 rounded-md bg-blue-400 hover:bg-blue-500 transition disabled:opacity-50"
           >
             Add MFA Device
           </button>

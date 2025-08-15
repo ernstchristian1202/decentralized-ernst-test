@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,7 +23,7 @@ const Signer = () => {
   const { primaryWallet, handleLogOut } = useDynamicContext();
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState<History[]>([]);
-  const [result, setResult] = useState<{
+  const [_, setResult] = useState<{
     isValid: boolean;
     signer: string;
   } | null>(null);
@@ -77,7 +77,7 @@ const Signer = () => {
   };
 
   return (
-    <div className="bg-gray-100 rounded-xl p-4">
+    <div className="bg-gray-100 rounded-xl p-4 max-h-[85vh] flex flex-col justify-between">
       <div className="flex justify-between">
         <h1 className="text-3xl font-bold text-primary mb-6">
           Web3 Message Signer
@@ -87,18 +87,21 @@ const Signer = () => {
           Logout
         </button>
       </div>
-      <div className="rounded-lg flex gap-4">
-        <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-          <div className="mb-6">
+      <div className="rounded-lg flex gap-4 max-h-[70vh]">
+        <div className="space-y-4 max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg flex flex-col justify-around">
+          <div>
             <p className="font-bold">Connected Wallet</p>
-            <p className="text-gray-700 bg-blue-100 px-2 py-1 rounded-xl flex gap-6 items-center">
-              <span className="font-semibold ml-1">
-                {`Connected:${primaryWallet?.address.slice(
-                  0,
-                  6
-                )}...${primaryWallet?.address?.slice(-5)}`}
-              </span>
-              <button onClick={handleCopy(primaryWallet?.address ?? "")}>
+            <p className="text-gray-700 bg-blue-100 px-2 py-1 rounded-xl flex items-center justify-between">
+              <div className="font-semibold">
+                Connected: &nbsp;&nbsp;
+                <span className="text-blue-500">
+                  {`${primaryWallet?.address.slice(
+                    0,
+                    9
+                  )}... ... ${primaryWallet?.address?.slice(-8)}`}
+                </span>
+              </div>
+              <button style={{ outline: 'none' }} onClick={handleCopy(primaryWallet?.address ?? "")}>
                 <FontAwesomeIcon icon={faCopy} />
               </button>
             </p>
@@ -110,7 +113,7 @@ const Signer = () => {
               e.preventDefault();
               signMessage();
             }}
-            className="space-y-4 mb-6 mt-4"
+            className="space-y-4"
           >
             <label htmlFor="message" className="font-bold">
               Enter your message to sign & verify
@@ -133,30 +136,14 @@ const Signer = () => {
               {isLoading ? "Processing..." : "Sign & Verify"}
             </button>
           </form>
-          {result && (
-            <div className="p-4 bg-green-50 rounded-md mb-6">
-              <p className="text-gray-700">
-                Signature Valid:{" "}
-                <span
-                  className={result.isValid ? "text-green-500" : "text-red-500"}
-                >
-                  {result.isValid ? "Yes" : "No"}
-                </span>
-              </p>
-              <p className="text-gray-700">
-                Signed by:{" "}
-                <span className="font-semibold">{result.signer}</span>
-              </p>
-            </div>
-          )}
         </div>
 
-        <div className="p-8 min-w-xl max-w-full max-h-[700px] bg-white rounded-xl overflow-auto relative">
+        <div className="p-8 min-w-xl bg-white rounded-xl overflow-auto relative flex flex-col">
           <h2 className="text-xl font-semibold text-primary mb-4">History</h2>
           {history.length === 0 ? (
             <p className="text-gray-500">No messages signed yet.</p>
           ) : (
-            <ul className="space-y-4 overflow-auto w-full">
+            <ul className="space-y-4 overflow-auto w-full max-h-[89%]">
               {history.map((item) => (
                 <li
                   key={`${item.signature}`}
@@ -165,10 +152,11 @@ const Signer = () => {
                   <div>
                     <FontAwesomeIcon icon={faMessage} />
                   </div>
-                  <div>
-                    <p>{item.message}</p>
+                  <div className="flex flex-col w-[90%]">
+                    <p className="w-[90%] truncate">{item.message}</p>
                     <p>
-                      <strong>Valid:</strong>{" "}
+                      <strong>Signature Valid:</strong>
+                      &nbsp;&nbsp;
                       <span
                         className={
                           item.isValid ? "text-green-500" : "text-red-500"
@@ -177,19 +165,23 @@ const Signer = () => {
                         {item.isValid ? "Yes" : "No"}
                       </span>
                     </p>
-                    <p>
-                      <span className="font-bold">Signed by: </span>
-                      {`${primaryWallet?.address.slice(
-                        0,
-                        6
-                      )}...${primaryWallet?.address?.slice(-6)}`}
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold">
+                        Signed by: &nbsp;&nbsp; <span className="text-blue-500">
+                        {`${primaryWallet?.address.slice(
+                          0,
+                          9
+                        )}... ... ${primaryWallet?.address?.slice(-8)}`}
+                        </span>
+                      </div>
                       <button
+                        style={{ outline: 'none' }}
                         className="p-0!"
                         onClick={handleCopy(primaryWallet?.address ?? "")}
                       >
                         <FontAwesomeIcon icon={faCopy} />
                       </button>
-                    </p>
+                    </div>
                   </div>
                 </li>
               ))}
